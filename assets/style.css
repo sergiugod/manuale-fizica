@@ -1,0 +1,240 @@
+/* Formarea autorilor de manuale – Fizică. Astronomie (2026)
+   Design sobru, instituțional: gri deschis, albastru închis, banda tricoloră. */
+:root{
+  --bg:#eceeef; --paper:#ffffff; --ink:#1b2432; --muted:#5b6677; --line:#d5dae1;
+  --navy:#16325c; --blue:#1f5fa8; --blue-soft:#e4edf8; --accent:#c8711d; --accent-soft:#fbead8;
+  --ok:#1f7a4d; --ok-soft:#e1f3ea; --bad:#b3261e; --bad-soft:#fbe4e2; --warn:#8a5a00; --warn-soft:#fff3d6;
+  --tri-b:#0046ae; --tri-y:#ffd200; --tri-r:#cc092f;
+  --radius:14px; --shadow:0 2px 10px rgba(20,40,70,.08);
+  --font:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45}
+a{color:var(--blue)}
+.tricolor{height:6px;background:linear-gradient(90deg,var(--tri-b) 0 33.3%,var(--tri-y) 33.3% 66.6%,var(--tri-r) 66.6% 100%)}
+.btn{display:inline-flex;align-items:center;gap:.4em;border:1px solid var(--line);background:var(--paper);color:var(--navy);
+  border-radius:999px;padding:.45em 1em;font:inherit;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.small{padding:.25em .75em;font-size:.85em}
+.tag{display:inline-block;font-size:.78em;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--blue);
+  background:var(--blue-soft);border-radius:6px;padding:.15em .55em}
+.src{font-size:.82em;color:var(--muted)}
+.src a{color:var(--muted)}
+
+/* ---------- Pagini obișnuite (index, plan, fișe) ---------- */
+.page{max-width:1100px;margin:0 auto;padding:28px 22px 60px}
+.page header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+.page h1{color:var(--navy);font-size:2rem;margin:.2em 0}
+.page h2{color:var(--navy);margin:1.6em 0 .6em}
+.page h3{color:var(--navy);margin:1.2em 0 .4em}
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin:12px 0}
+.grid{display:grid;gap:14px}
+.grid.c3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid.c2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.session-card h3{margin-top:.2em}
+.session-card .time{font-weight:700;color:var(--accent)}
+table.t{width:100%;border-collapse:collapse;background:var(--paper);font-size:.93em}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
+table.t th{background:var(--navy);color:#fff;font-weight:600}
+table.t tr:nth-child(even) td{background:#f6f8fa}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:8px;margin:10px 0}
+.note.blue{border-color:var(--blue);background:var(--blue-soft)}
+footer.foot{margin-top:40px;font-size:.85em;color:var(--muted)}
+
+/* ---------- Prezentare ---------- */
+body.deck{overflow:hidden;background:#d9dde2}
+#stage-wrap{position:fixed;inset:0 0 34px 0;display:flex;align-items:center;justify-content:center}
+#stage{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;overflow:hidden;border-radius:4px;
+  box-shadow:0 6px 30px rgba(0,0,0,.18)}
+.slide.active{display:flex}
+.slide .s-head{padding:26px 48px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.slide .kicker{font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)}
+.slide h2{font-size:38px;line-height:1.12;margin:6px 0 0;color:var(--navy)}
+.slide .s-body{flex:1;padding:8px 48px 14px;font-size:21px;overflow:auto}
+.slide .s-foot{display:flex;justify-content:space-between;align-items:center;padding:0 48px 10px;font-size:13px;color:var(--muted)}
+.slide .s-foot .src{font-size:13px}
+.slide .tricolor{height:7px}
+.slide.cover{background:linear-gradient(135deg,#16325c 0%,#1f5fa8 100%);color:#fff}
+.slide.cover h2{color:#fff;font-size:52px}
+.slide.cover .kicker{color:#ffd200}
+.slide.cover .s-body{display:flex;flex-direction:column;justify-content:center;font-size:24px}
+.slide.cover .s-foot{color:#cfd9e8}
+.cover .meta{margin-top:28px;font-size:20px;opacity:.95}
+.cover .meta b{color:#ffd200}
+.cols{display:grid;gap:18px}
+.cols.c2{grid-template-columns:1fr 1fr}
+.cols.c3{grid-template-columns:repeat(3,1fr)}
+.cols.c4{grid-template-columns:repeat(4,1fr)}
+.box{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.box h3{margin:0 0 8px;color:var(--navy);font-size:22px}
+.box.old{border-top:5px solid #8b95a3}
+.box.new{border-top:5px solid var(--blue)}
+.box.man{border-top:5px solid var(--accent);background:#fffaf4}
+.box p{margin:.3em 0}
+.box ul{margin:.3em 0;padding-left:1.1em}
+.lab{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box.new .lab{color:var(--blue)} .box.man .lab{color:var(--accent)}
+.big{font-size:28px;font-weight:700;color:var(--navy)}
+.quote{font-size:25px;color:var(--navy);border-left:6px solid var(--blue);padding:6px 0 6px 18px;margin:8px 0}
+.small{font-size:17px}
+.muted{color:var(--muted)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:15px;font-weight:700;background:var(--blue-soft);color:var(--navy);margin:2px}
+.steps{display:flex;gap:12px;align-items:stretch}
+.steps .st{flex:1;background:var(--paper);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);position:relative}
+.steps .st b{display:block;color:var(--blue);font-size:15px;text-transform:uppercase;letter-spacing:.05em}
+.steps .st:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:40%;font-size:22px;color:var(--blue)}
+.agenda{width:100%;border-collapse:collapse;font-size:20px}
+.agenda td{padding:9px 12px;border-bottom:1px solid var(--line)}
+.agenda tr.now td{background:var(--blue-soft);font-weight:700}
+.agenda td.h{width:150px;font-weight:700;color:var(--accent)}
+
+/* bara de jos a prezentării */
+#bar{position:fixed;left:0;right:0;bottom:0;height:34px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:14px;
+  padding:0 12px;font-size:14px;z-index:20}
+#bar .prog{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
+#bar .prog i{display:block;height:100%;background:var(--tri-y);width:0}
+#bar button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:6px;padding:2px 8px;cursor:pointer;font:inherit}
+#bar .clock.late{color:#ffb4b4} #bar .clock.ok{color:#bff0d2}
+#notes{position:fixed;right:0;top:0;bottom:34px;width:420px;background:#fffdf7;border-left:3px solid var(--accent);padding:16px 18px;
+  overflow:auto;display:none;z-index:15;font-size:16px;box-shadow:-6px 0 20px rgba(0,0,0,.12)}
+#notes.show{display:block}
+#notes h4{margin:0 0 6px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;font-size:13px}
+#notes .plan{font-weight:700;color:var(--navy);margin-bottom:8px}
+#help{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:18px 24px;border-radius:12px;z-index:30;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);display:none;font-size:16px}
+#help.show{display:block}
+#help kbd{background:#eef;border:1px solid #ccd;border-radius:4px;padding:1px 6px}
+
+/* ---------- Widgeturi ---------- */
+.w{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.w .w-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.w .w-title{font-weight:700;color:var(--navy)}
+.score{font-weight:800;font-size:22px}
+.score.ok{color:var(--ok)} .score.mid{color:var(--warn)} .score.bad{color:var(--bad)}
+
+/* clasificare */
+.cls-item{display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid var(--line);font-size:18px}
+.cls-item:last-child{border-bottom:0}
+.cls-item .txt{flex:1}
+.cls-item .opts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cls-item .opts button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font:inherit;font-size:15px;color:var(--navy)}
+.cls-item .opts button.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cls-item.ok{background:var(--ok-soft)} .cls-item.bad{background:var(--bad-soft)}
+.cls-item .why{display:none;font-size:15px;color:var(--muted);margin-top:3px}
+.cls-item.checked .why{display:block}
+.cls-item .mark{width:26px;text-align:center;font-weight:800}
+.cls-item.ok .mark{color:var(--ok)} .cls-item.bad .mark{color:var(--bad)}
+
+/* sondaj */
+.poll{display:grid;grid-template-columns:1fr 230px;gap:16px;align-items:start}
+.poll .q{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.poll .bars .row{display:grid;grid-template-columns:1fr 60px;gap:8px;align-items:center;margin:6px 0}
+.poll .bars .lbl{font-size:17px;margin-bottom:2px}
+.poll .bars .track{height:26px;background:#edf1f6;border-radius:6px;overflow:hidden;position:relative}
+.poll .bars .fill{height:100%;background:var(--blue);width:0;transition:width .6s}
+.poll .bars .row.correct .fill{background:var(--ok)}
+.poll .bars .n{font-weight:800;color:var(--navy);text-align:right}
+.poll .qr{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;font-size:13px;color:var(--muted)}
+.poll .qr .code{display:flex;justify-content:center}
+.poll .qr .code img,.poll .qr .code svg{width:190px;height:190px}
+.poll .status{font-size:13px;color:var(--muted);margin-top:6px}
+.poll .manual{display:flex;gap:4px;margin-left:6px}
+.poll .manual button{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:800}
+.poll.hidden-res .fill,.poll.hidden-res .n{visibility:hidden}
+.cloud{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;min-height:140px;padding:8px}
+.cloud span{color:var(--navy);font-weight:700;line-height:1}
+.cloud span:nth-child(3n){color:var(--blue)} .cloud span:nth-child(4n){color:var(--accent)}
+
+/* decizii */
+.dec{display:grid;grid-template-columns:1fr 300px;gap:16px}
+.dec .prop{font-size:23px;color:var(--navy);font-weight:600}
+.dec .ans{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-size:18px}
+.dec .ans.show{display:block}
+.dec .ans.Acceptat{background:var(--ok-soft);border-left:5px solid var(--ok)}
+.dec .ans.Respins{background:var(--bad-soft);border-left:5px solid var(--bad)}
+.dec .ans.Partial{background:var(--warn-soft);border-left:5px solid var(--warn)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:#cfd6df;display:inline-block;cursor:pointer}
+.dots i.on{background:var(--navy)}
+
+/* harta unității */
+.umap{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:12px;font-size:15px}
+.umap .col h4{margin:0 0 6px;color:#fff;background:var(--navy);padding:5px 9px;border-radius:8px;font-size:15px}
+.umap .it{background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 8px;margin:4px 0;cursor:pointer;line-height:1.25}
+.umap .it.hl{background:var(--accent-soft);border-color:var(--accent)}
+.umap .it.sel{background:var(--blue-soft);border-color:var(--blue);font-weight:600}
+.umap .it.dim{opacity:.45}
+.umap .col{max-height:520px;overflow:auto}
+
+/* generator, calculator, checklist */
+.gen select,.gen input,.calc input{font:inherit;font-size:16px;padding:5px 8px;border:1px solid var(--line);border-radius:8px}
+.gen .out{margin-top:10px;font-size:16px}
+.gen .out .sec{border-left:4px solid var(--blue);padding:4px 10px;margin:6px 0;background:#f7f9fc;border-radius:6px}
+.gen .out .sec b{color:var(--navy)}
+.calc table{width:100%;border-collapse:collapse;font-size:16px}
+.calc td,.calc th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:center}
+.calc th{color:var(--navy)} .calc td:first-child,.calc th:first-child{text-align:left}
+.calc input{width:64px;text-align:center}
+.calc tr.err td{background:var(--bad-soft)}
+.chk{columns:2;column-gap:22px;font-size:16px}
+.chk label{display:flex;gap:8px;align-items:flex-start;break-inside:avoid;padding:4px 0}
+.chk input{margin-top:4px;transform:scale(1.25)}
+.meter{height:16px;background:#edf1f6;border-radius:8px;overflow:hidden;margin:6px 0}
+.meter i{display:block;height:100%;width:0;transition:width .4s}
+.slider-row{display:grid;grid-template-columns:240px 1fr 90px;gap:10px;align-items:center;margin:8px 0;font-size:18px}
+.slider-row input[type=range]{width:100%}
+.result-big{font-size:34px;font-weight:800;color:var(--navy)}
+.verdict{padding:10px 14px;border-radius:10px;font-size:19px;margin-top:8px}
+.verdict.ok{background:var(--ok-soft);color:var(--ok)} .verdict.bad{background:var(--bad-soft);color:var(--bad)}
+.timer{font-size:64px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.timer.end{color:var(--bad)}
+.reveal-card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;cursor:pointer;border-top:5px solid var(--blue)}
+.reveal-card .back{display:none;margin-top:8px;font-size:16px;color:var(--ink)}
+.reveal-card.open .back{display:block}
+.reveal-card .front{font-weight:700;color:var(--navy);font-size:18px}
+.reveal-card .hint{font-size:13px;color:var(--muted)}
+.bar-chart .r{display:grid;grid-template-columns:260px 1fr 70px;gap:10px;align-items:center;margin:5px 0;font-size:17px}
+.bar-chart .tr{height:22px;background:#edf1f6;border-radius:5px;overflow:hidden}
+.bar-chart .tr i{display:block;height:100%}
+
+/* ---------- Pagina de vot (telefon) ---------- */
+body.vote{background:var(--bg)}
+.vote main{max-width:520px;margin:0 auto;padding:18px}
+.vote h1{font-size:1.25rem;color:var(--navy)}
+.vote .opt{display:block;width:100%;text-align:left;margin:10px 0;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-size:1.05rem;cursor:pointer}
+.vote .opt.sel{border-color:var(--navy);background:var(--blue-soft)}
+.vote textarea,.vote input[type=text]{width:100%;font:inherit;font-size:1.05rem;padding:12px;border-radius:12px;border:2px solid var(--line)}
+.vote .msg{margin-top:14px;padding:12px;border-radius:10px}
+.vote .msg.ok{background:var(--ok-soft);color:var(--ok)} .vote .msg.err{background:var(--bad-soft);color:var(--bad)}
+
+/* ---------- Tipar (fișe) ---------- */
+.sheet{background:#fff;padding:18mm 16mm;margin:18px auto;max-width:210mm;box-shadow:var(--shadow);border-radius:6px}
+.sheet h2{margin-top:0}
+.sheet .fill{border-bottom:1px solid #999;min-height:1.6em;margin:4px 0}
+.sheet table.t td{height:2.2em}
+.sheet .lines div{border-bottom:1px solid #aaa;height:1.9em}
+@media print{
+  body{background:#fff}
+  .no-print{display:none!important}
+  .sheet{box-shadow:none;margin:0;padding:10mm 8mm;max-width:none;page-break-after:always}
+  .page{padding:0}
+  a{color:inherit;text-decoration:none}
+}
+@media (max-width:760px){.page h1{font-size:1.5rem}}
+
+/* ajustări după verificarea vizuală */
+.dec{grid-template-columns:1fr}
+.dec .poll .q{display:none}
+.dec .poll{grid-template-columns:1fr 170px;box-shadow:none;padding:6px 0 0}
+.dec .poll .qr .code svg{width:140px;height:140px}
+.cols .poll{grid-template-columns:1fr 150px;gap:10px}
+.cols .poll .q{font-size:19px}
+.cols .poll .qr .code svg{width:130px;height:130px}
+.cls-item.wide{flex-wrap:wrap}
+.cls-item.wide .opts{width:100%;justify-content:flex-start;padding-left:36px}
+.slide .small{font-size:18px}
+.cls-item{font-size:19px}
+.cls-item.wide{font-size:17px;padding:4px 8px}.cls-item.wide .opts button{font-size:14px;padding:2px 8px}

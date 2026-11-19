@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vot – formarea autorilor de manuale</title><link rel="stylesheet" href="assets/style.css"></head>
+<body class="vote"><div class="tricolor"></div><main><div class="src">Formarea autorilor de manuale · Fizică. Astronomie</div><h1 id="q">Se încarcă…</h1><div id="opts"></div><div id="msg"></div>
+<p class="src" style="margin-top:24px">Votul este anonim: nu se cer nume sau e-mail. Puteți schimba răspunsul votând din nou.</p></main>
+<script src="assets/config.js"></script><script src="assets/questions.js"></script><script src="assets/live.js"></script>
+<script>
+(function(){
+  const sp = new URLSearchParams(location.search); if(sp.get("u")) Live.setUrl(sp.get("u"));
+  const id = sp.get("q"), Q = (window.QUESTIONS||{})[id];
+  const qEl = document.getElementById("q"), box = document.getElementById("opts"), msg = document.getElementById("msg");
+  if(!Q){ qEl.textContent = "Întrebarea nu a fost găsită. Scanați din nou codul QR."; return; }
+  qEl.textContent = Q.text;
+  function say(t, ok){ msg.className = "msg " + (ok ? "ok" : "err"); msg.textContent = t; }
+  if(!Live.enabled()){ say("Votul de pe telefon nu este activ acum. Răspundeți ridicând mâna – formatorul adaugă voturile pe ecran.", false); }
+  function send(a, btn){
+    if(!Live.enabled()) return;
+    say("Se trimite…", true);
+    Live.vote(id, a).then(r => { if(r && r.ok){ say("Mulțumim! Răspunsul a fost înregistrat: „" + a + "”.", true); try{ localStorage.setItem("fa_v_" + id, a); }catch(e){} }
+      else say("Nu s-a putut înregistra: " + ((r && r.error) || "eroare"), false); })
+      .catch(() => say("Nu există conexiune cu serverul de vot. Încercați din nou.", false));
+  }
+  let prev = null; try{ prev = localStorage.getItem("fa_v_" + id); }catch(e){}
+  if(Q.type === "word"){
+    box.innerHTML = '<input type="text" id="w" maxlength="40" placeholder="un cuvânt sau o expresie scurtă"><button class="btn primary" id="s" style="margin-top:10px">Trimite</button>';
+    document.getElementById("s").onclick = () => { const v = document.getElementById("w").value.trim().toLowerCase(); if(v) send(v); };
+  } else {
+    Q.opts.forEach(o => { const b = document.createElement("button"); b.className = "opt" + (o === prev ? " sel" : ""); b.textContent = o;
+      b.onclick = () => { document.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); send(o, b); }; box.appendChild(b); });
+  }
+  if(prev) say("Ați votat deja: „" + prev + "”. Puteți schimba răspunsul.", true);
+})();
+</script></body></html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Formarea autorilor de manuale – Fizică. Astronomie</title><link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="tricolor no-print"></div>
+<div class="page"><header class="top"><div><span class="tag">Formarea autorilor de manuale școlare</span><h1>Fizică. Astronomie: manualul pornind de la rezultatele învățării</h1>
+<div class="muted">Sesiunea de formare a autorilor și potențialilor autori de manuale școlare · MEC în parteneriat cu UNDP Moldova (Ordinul MEC nr. 2182 din 30.10.2026)</div><div style="margin-top:4px">Formatori: Godovaniuc Sergiu (coautor al curriculumului Fizică. Astronomie) și Machevnina Olga</div></div>
+<div class="no-print"><button class="btn primary" id="qr-open">▣ Codul QR al paginii</button></div></header>
+<div class="grid c3"><div class="card session-card"><span class="time">09:30–11:00</span><h3>Sesiunea 1. Ce se schimbă și de ce: noul curriculum explicat de autorii săi</h3>
+<p class="small"><b>Formator:</b> Godovaniuc Sergiu<br>16 slide-uri · 90 de minute</p>
+<a class="btn primary" href="sesiunea1.html">Prezentarea</a> <a class="btn" href="fise.html#fisa1">Fișa 1</a></div><div class="card session-card"><span class="time">11:30–13:00</span><h3>Sesiunea 2. Proiectarea manualului pornind de la rezultatele învățării</h3>
+<p class="small"><b>Formator:</b> Machevnina Olga<br>13 slide-uri · 90 de minute</p>
+<a class="btn primary" href="sesiunea2.html">Prezentarea</a> <a class="btn" href="fise.html#fisa2">Fișa 2</a></div><div class="card session-card"><span class="time">14:00–15:30</span><h3>Sesiunea 3. Specificul disciplinei și conexiunile interdisciplinare în manual</h3>
+<p class="small"><b>Formatori:</b> Godovaniuc Sergiu și Machevnina Olga<br>14 slide-uri · 90 de minute</p>
+<a class="btn primary" href="sesiunea3.html">Prezentarea</a> <a class="btn" href="fise.html#fisa3">Fișa 3</a></div></div>
+<div class="grid c2"><div class="card"><h3 style="margin-top:0">Programul zilei</h3><table class="t"><tr><td><b>09:00–09:30</b></td><td>Cafea de bun venit</td></tr><tr><td><b>09:30–11:00</b></td><td>Ce se schimbă și de ce: noul curriculum explicat de autorii săi · <a href="sesiunea1.html">prezentarea</a></td></tr><tr><td><b>11:00–11:30</b></td><td>Pauză de cafea</td></tr><tr><td><b>11:30–13:00</b></td><td>Proiectarea manualului pornind de la rezultatele învățării · <a href="sesiunea2.html">prezentarea</a></td></tr><tr><td><b>13:00–14:00</b></td><td>Prânz</td></tr><tr><td><b>14:00–15:30</b></td><td>Specificul disciplinei și conexiunile interdisciplinare în manual · <a href="sesiunea3.html">prezentarea</a></td></tr><tr><td><b>15:30–16:00</b></td><td>Pauză de cafea</td></tr></table></div>
+<div class="card"><h3 style="margin-top:0">Pentru participanți</h3><p><a class="btn" href="fise.html">Fișele de lucru (tipărire / PDF)</a></p>
+<h3>Documentele-sursă</h3><ul><li><a href="docs/Curriculum_Fizica_Astronomie_2026.pdf#page=1" target="_blank" rel="noopener">Curriculum</a></li><li><a href="docs/Conceptia_Fizica_Astronomie.pdf#page=1" target="_blank" rel="noopener">Concepția disciplinei</a></li><li><a href="docs/Sugestii_metodologice_DRAFT2.pdf#page=1" target="_blank" rel="noopener">Sugestii metodologice (Draft 2)</a></li><li><a href="docs/Tabel_de_sinteza_consultari.pdf#page=1" target="_blank" rel="noopener">Tabel de sinteză a consultărilor</a></li></ul>
+<p class="src">Trimiterile din prezentări deschid PDF-ul la pagina exactă. Sugestiile metodologice sunt varianta de lucru Draft 2.</p>
+<h3>Pentru formatori 🔒</h3><p><a class="btn" href="plan.html">Planul formatorului</a> <a class="btn" href="instalare.html">Instalarea votului (Google)</a></p>
+<p class="src">Paginile marcate cu 🔒 și notele din prezentări se deschid cu parola formatorilor.</p></div></div>
+<div id="qr-full" style="display:none;position:fixed;inset:0;background:#fff;z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:2vh;cursor:pointer">
+<div class="tricolor" style="position:absolute;top:0;left:0;right:0;height:10px"></div>
+<div style="font-size:3.2vh;font-weight:700;color:var(--navy);text-align:center">Scanați pentru materialele formării<br><span style="font-weight:400;font-size:2.4vh;color:var(--muted)">Fizică. Astronomie · formarea autorilor de manuale</span></div>
+<div id="qr-big" style="width:min(70vh,90vw);height:min(70vh,90vw)"></div>
+<div style="font-size:3vh;font-weight:700;color:var(--blue)">sergiugod.github.io/manuale-fizica/</div>
+<div class="src">Clic oriunde sau Esc pentru a închide</div></div>
+<script src="assets/qrcode.js"></script><script>
+(function(){
+  const box = document.getElementById("qr-full"), big = document.getElementById("qr-big");
+  const q = qrcode(0, "H"); q.addData("https://sergiugod.github.io/manuale-fizica/"); q.make();
+  big.innerHTML = q.createSvgTag({cellSize: 8, margin: 2, scalable: true});
+  const svg = big.querySelector("svg"); svg.style.width = "100%"; svg.style.height = "100%";
+  document.getElementById("qr-open").onclick = () => { box.style.display = "flex"; if(box.requestFullscreen) box.requestFullscreen().catch(()=>{}); };
+  const close = () => { box.style.display = "none"; if(document.fullscreenElement) document.exitFullscreen(); };
+  box.onclick = close; document.addEventListener("keydown", e => { if(e.key === "Escape") box.style.display = "none"; });
+  document.addEventListener("fullscreenchange", () => { if(!document.fullscreenElement) box.style.display = "none"; });
+})();
+</script>
+<footer class="foot no-print">Sesiunea de formare a autorilor și potențialilor autori de manuale școlare · MEC în parteneriat cu UNDP Moldova (Ordinul MEC nr. 2182 din 30.10.2026)<br>Formatori: Godovaniuc Sergiu (coautor al curriculumului Fizică. Astronomie) și Machevnina Olga. Documentele-sursă sunt în dosarul <a href="docs/">docs/</a>; Sugestiile metodologice sunt în variantă de lucru (Draft 2).</footer>
+</div></body></html>
