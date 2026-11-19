@@ -1,6 +1,6 @@
 # Formarea autorilor de manuale · Fizică. Astronomie
 
-Materiale pentru sesiunea de formare a autorilor și potențialilor autori de manuale școlare (MEC în parteneriat cu UNDP Moldova, Ordinul MEC nr. 2182 din 30.10.2026). Formatori: Godovaniuc Sergiu (coautor al curriculumului Fizică. Astronomie) și Machevnina Olga. Notele formatorilor, planul și pagina de instalare sunt criptate și se deschid cu parola formatorilor.
+Materiale pentru sesiunea de formare a autorilor și potențialilor autori de manuale școlare (MEC în parteneriat cu UNDP Moldova, Ordinul MEC nr. 2182 din 30.10.2026). 21 noiembrie 2026, Chișinău, Universitatea Pedagogică de Stat „Ion Creangă”. Formatori: Godovaniuc Sergiu, Machevnina Olga. Notele formatorilor, planul și pagina de instalare sunt criptate și se deschid cu parola formatorilor.
 
 ## Conținut
 
@@ -9,13 +9,14 @@ Materiale pentru sesiunea de formare a autorilor și potențialilor autori de ma
 | `index.html` | Pagina principală: programul zilei, cele 3 sesiuni, materiale, surse |
 | `sesiunea1.html` | 09:30–11:00 · Ce se schimbă și de ce |
 | `sesiunea2.html` | 11:30–13:00 · Proiectarea manualului pornind de la rezultatele învățării |
-| `sesiunea3.html` | 14:00–15:30 · Specificul disciplinei și conexiunile interdisciplinare |
+| `sesiunea3.html` | 14:00–16:00 · Specificul disciplinei și conexiunile interdisciplinare |
 | `plan.html` | 🔒 Planul formatorului: obiective, desfășurare pe minute, note, surse, varianta scurtă |
 | `fise.html` | Fișele de lucru (tipărire A4 sau PDF) |
 | `vot.html` | Pagina de vot pentru telefon (se deschide din codul QR) |
 | `instalare.html` | 🔒 Instalarea scriptului Google, pas cu pas, pentru doi formatori |
 | `apps-script/Code.gs` | Scriptul Google pentru totalul comun |
-| `docs/` | Documentele-sursă (PDF); trimiterile din prezentări deschid pagina exactă |
+| `docs/` | Documentele-sursă (PDF), inclusiv `PDLD_Fizica_Astronomie_VI_X.pdf` – proiectarea de lungă durată aliniată la curriculum; trimiterile din prezentări deschid pagina exactă |
+| `assets/img/`, `assets/favicon.*` | Imagini din „Tabloul elementelor de noutate” (MEC, 2026) și pictograma site-ului |
 
 ## Publicare pe GitHub Pages
 
@@ -30,6 +31,10 @@ Vezi pagina `instalare.html` (regim formator, cu parolă). Fără script, sondaj
 ## Utilizarea prezentării
 
 `→` / `Spațiu` înainte · `←` înapoi · `N` notele formatorului · `F` ecran complet · `H` ajutor. Bara de jos arată ora planificată a slide-ului și întârzierea față de plan.
+
+## Actualizare
+
+La înlocuirea fișierelor pe GitHub **nu suprascrieți** `assets/config.js`: el conține adresa scriptului Google de vot.
 
 ## Licențe
 

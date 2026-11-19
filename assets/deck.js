@@ -106,7 +106,13 @@
     Live.setUrl(u);
     if(u && confirm("Adresa a fost salvată. Doriți să ștergeți voturile de test? (cere PIN-ul)")){
       const pin = prompt("PIN-ul setat în Proprietățile scriptului:");
-      if(pin) Live.reset("ALL", pin).then(r => alert(r.ok ? "Voturi șterse: " + r.deleted : "Eroare: " + r.error)).catch(()=>alert("Scriptul nu răspunde."));
+      if(pin){
+        Live.reset("ALL", pin)
+          .then(r => alert(r.ok ? "Voturi șterse: " + r.deleted : "Eroare: " + r.error))
+          .catch(() => alert("Scriptul nu răspunde."))
+          .finally(() => location.reload());
+        return;
+      }
     }
     location.reload();
   }
@@ -115,16 +121,19 @@
 
   /* --- Decizii ale autorilor (sondaj + dezvăluire) --- */
   $$("[data-decisions]").forEach(el => {
-    const list = json(el).items; let k = 0;
+    const D = json(el), list = D.items; let k = 0;
+    const unit = D.unit || "Propunerea", btn = D.btn || "Arată decizia autorilor";
     el.classList.add("w");
-    el.innerHTML = `<div class="w-head"><div class="w-title">Propunerea <span class="k"></span> din ${list.length}</div>
+    el.innerHTML = `<div class="w-head"><div class="w-title">${esc(unit)} <span class="k"></span> din ${list.length}</div>
       <div style="display:flex;gap:10px;align-items:center"><button class="btn small b-p">←</button><div class="dots">${list.map((_, i) => `<i data-i="${i}"></i>`).join("")}</div><button class="btn small b-n">Următoarea →</button></div></div><div class="cards"></div>`;
     const cards = $(".cards", el);
     list.forEach((it, i) => {
       const c = document.createElement("div"); c.className = "card-dec"; c.style.display = i ? "none" : "block";
-      c.innerHTML = `<div class="dec"><div><div class="lab">${esc(it.clasa)} · ${esc(it.cine)}</div><div class="prop">„${esc(it.prop)}”</div>
-        <div class="ans ${it.statut === "Acceptat parțial" ? "Partial" : it.statut}"><b>${esc(it.statut)}.</b> ${esc(it.why)}<div class="src">${it.src}</div></div>
-        <button class="btn small primary b-rev" style="margin-top:10px">Arată decizia autorilor</button></div>
+      const cls = it.statut === "Acceptat parțial" ? "Partial" : (["Acceptat", "Respins"].includes(it.statut) ? it.statut : "Info");
+      const quoted = /^[„"]/.test(it.prop) ? esc(it.prop) : (D.unit ? esc(it.prop) : "„" + esc(it.prop) + "”");
+      c.innerHTML = `<div class="dec"><div><div class="lab">${esc(it.clasa)}${it.cine ? " · " + esc(it.cine) : ""}</div><div class="prop">${quoted}</div>
+        <div class="ans ${cls}"><b>${esc(it.statut)}.</b> ${esc(it.why)}<div class="src">${it.src}</div></div>
+        <button class="btn small primary b-rev" style="margin-top:10px">${esc(btn)}</button></div>
         <div data-poll="${it.q}"></div></div>`;
       cards.appendChild(c);
       $(".b-rev", c).onclick = () => $(".ans", c).classList.add("show");
@@ -147,6 +156,18 @@
     try{ const q = qrcode(0, "M"); q.addData(text); q.make(); return q.createSvgTag({cellSize: 4, margin: 1, scalable: true}); }
     catch(e){ return "<div class='small'>" + esc(text) + "</div>"; }
   }
+  /* codul QR pe tot ecranul (clic pe codul de pe slide) */
+  const qrBig = document.createElement("div"); qrBig.id = "qr-zoom";
+  qrBig.innerHTML = `<div class="qz-q"></div><div class="qz-code"></div><div class="qz-u"></div><div class="src">Clic oriunde sau Esc pentru a închide</div>`;
+  document.body.appendChild(qrBig);
+  qrBig.onclick = () => qrBig.classList.remove("show");
+  document.addEventListener("keydown", e => { if(e.key === "Escape") qrBig.classList.remove("show"); });
+  function zoomQR(url, text){
+    $(".qz-q", qrBig).textContent = text || "Scanați pentru vot";
+    $(".qz-code", qrBig).innerHTML = qrSvg(url);
+    $(".qz-u", qrBig).textContent = url.split("&u=")[0].replace(/^https?:\/\//, "");
+    qrBig.classList.add("show");
+  }
   $$("[data-poll]").forEach(el => {
     const id = el.dataset.poll, Q = (window.QUESTIONS || {})[id];
     if(!Q){ el.textContent = "Întrebare lipsă: " + id; return; }
@@ -163,7 +184,8 @@
           ${Q.type === "word" ? '<input class="w-add" placeholder="adaugă manual un cuvânt" style="font:inherit;font-size:15px;padding:3px 8px;border-radius:8px;border:1px solid #ccd">' : ""}
         </div>
         <div class="status"></div></div>
-      <div class="qr"><div class="code">${qrSvg(url)}</div><div>Scanați pentru vot</div><div style="word-break:break-all;font-size:11px;margin-top:4px">${esc(url.split("&u=")[0].replace(/^https?:\/\//,""))}</div></div>`;
+      <div class="qr" title="Clic pentru a mări codul"><div class="code">${qrSvg(url)}</div><div>Scanați pentru vot · <b>clic = mărește</b></div><div class="qr-url">${esc(url.split("&u=")[0].replace(/^https?:\/\//,""))}</div></div>`;
+    $(".qr", el).onclick = () => zoomQR(url, Q.text);
     if(hidden) el.classList.add("hidden-res");
     const res = $(".res", el), status = $(".status", el);
     function render(){
@@ -200,33 +222,41 @@
     render();
   });
 
-  /* --- Clasificare cu verificare automată --- */
+  /* --- Clasificare cu verificare automată ---
+     2 categorii: listă cu butoane (pe două coloane dacă sunt multe enunțuri);
+     3+ categorii: tabel-matrice (enunțuri pe rânduri, categorii pe coloane). */
   $$("[data-classify]").forEach(el => {
     const d = json(el); const ans = {};
+    const mx = d.cats.length >= 3;
     el.classList.add("w");
-    el.innerHTML = `<div class="w-head"><div class="w-title">${esc(d.title || "")}</div><div><span class="score"></span>
-      <button class="btn small primary b-check">Verifică</button> <button class="btn small b-reset">Din nou</button></div></div>
-      <div class="list">${d.items.map((it, i) => `<div class="cls-item${d.cats.length > 4 ? " wide" : ""}" data-i="${i}"><span class="mark"></span><div class="txt">${it.t}<div class="why">${it.why || ""}</div></div>
-      <div class="opts">${d.cats.map(c => `<button data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div></div>`).join("")}</div>
-      ${d.src ? `<div class="src" style="margin-top:6px">${d.src}</div>` : ""}`;
-    $$(".cls-item", el).forEach(row => $$(".opts button", row).forEach(b => b.onclick = () => {
+    const head = `<div class="w-head"><div class="w-title">${esc(d.title || "")}</div><div><span class="score"></span>
+      <button class="btn small primary b-check">Verifică</button> <button class="btn small b-reset">Din nou</button></div></div>`;
+    const body = mx
+      ? `<table class="cls-mx"><thead><tr><th class="mk"></th><th class="tx"></th>${d.cats.map(c => `<th class="ct">${esc(c)}</th>`).join("")}</tr></thead><tbody>
+         ${d.items.map((it, i) => `<tr class="cls-row" data-i="${i}"><td class="mark"></td><td class="txt">${it.t}<div class="why">${it.why || ""}</div></td>
+         ${d.cats.map(c => `<td class="opts"><button data-c="${esc(c)}" title="${esc(c)}" aria-label="${esc(c)}"></button></td>`).join("")}</tr>`).join("")}</tbody></table>`
+      : `<div class="list${d.items.length >= 8 ? " grid2" : ""}">${d.items.map((it, i) => `<div class="cls-item cls-row" data-i="${i}"><span class="mark"></span><div class="txt">${it.t}<div class="why">${it.why || ""}</div></div>
+         <div class="opts">${d.cats.map(c => `<button data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div></div>`).join("")}</div>`;
+    el.innerHTML = head + body + (d.src ? `<div class="src" style="margin-top:6px">${d.src}</div>` : "");
+    const rows = () => $$(".cls-row", el);
+    rows().forEach(row => $$(".opts button", row).forEach(b => b.onclick = () => {
       $$(".opts button", row).forEach(x => x.classList.remove("sel")); b.classList.add("sel"); ans[row.dataset.i] = b.dataset.c;
     }));
     $(".b-check", el).onclick = () => {
       let ok = 0;
       d.items.forEach((it, i) => {
-        const row = $(`.cls-item[data-i="${i}"]`, el), good = ans[i] === it.c;
+        const row = $(`.cls-row[data-i="${i}"]`, el), good = ans[i] === it.c;
         if(good) ok++;
         row.classList.add("checked"); row.classList.toggle("ok", good); row.classList.toggle("bad", !good);
         $(".mark", row).textContent = good ? "✓" : "✗";
-        if(!good) $$(".opts button", row).forEach(b => { if(b.dataset.c === it.c) b.style.outline = "3px solid #1f7a4d"; });
+        if(!good) $$(".opts button", row).forEach(b => { if(b.dataset.c === it.c) b.classList.add("right"); });
       });
       const sc = $(".score", el), p = ok / d.items.length;
       sc.textContent = ok + " / " + d.items.length; sc.className = "score " + (p >= .8 ? "ok" : p >= .5 ? "mid" : "bad");
     };
     $(".b-reset", el).onclick = () => {
       Object.keys(ans).forEach(k => delete ans[k]);
-      $$(".cls-item", el).forEach(r => { r.className = "cls-item" + (d.cats.length > 4 ? " wide" : ""); $(".mark", r).textContent = ""; $$(".opts button", r).forEach(b => { b.classList.remove("sel"); b.style.outline = ""; }); });
+      rows().forEach(r => { r.classList.remove("checked", "ok", "bad"); $(".mark", r).textContent = ""; $$(".opts button", r).forEach(b => b.classList.remove("sel", "right")); });
       $(".score", el).textContent = "";
     };
   });
@@ -279,7 +309,7 @@
       <div class="src" style="margin-top:6px">${d.src}</div>`;
     function render(){
       const s = d.sets[$(".c-sel", el).value];
-      $(".tb", el).innerHTML = `<table><tr><th>Unitatea de învățare</th><th>Total</th><th>P–Î</th><th>LL</th><th>ES</th><th>Lecții în manual</th></tr>
+      $(".tb", el).innerHTML = `<table><tr><th>Unitatea de învățare</th><th>Total ore</th><th>Predare–învățare</th><th>Lucrări de laborator</th><th>Evaluare sumativă</th><th>Lecții în manual</th></tr>
         ${s.rows.map((r, i) => `<tr data-i="${i}"><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5] === false ? "–" : `<input type="number" min="0" value="${r[1]}">`}</td></tr>`).join("")}
         <tr><th>Total an</th><th>${s.total}</th><th colspan="3"></th><th class="sum"></th></tr></table>`;
       $$("input", el).forEach(inp => inp.oninput = check); check();
@@ -319,37 +349,68 @@
     $$("input", el).forEach(i => i.onchange = upd); upd();
   });
 
-  /* --- Simulator: investigația „cărămida ușoară” --- */
-  $$("[data-density]").forEach(el => {
-    el.classList.add("w");
-    el.innerHTML = `<div class="w-head"><div class="w-title">Verificăm densitatea declarată: 600 kg/m³ (vas cu apă + riglă gradată în mm)</div></div>
-      <div class="cols c2"><div>
-        <div class="slider-row"><span>Înălțimea cărămizii H</span><input type="range" class="H" min="50" max="250" value="120"><b class="vH"></b></div>
-        <div class="slider-row"><span>Partea scufundată h</span><input type="range" class="h" min="5" max="250" value="72"><b class="vh"></b></div>
-        <div class="slider-row"><span>Precizia riglei Δ</span><input type="range" class="d" min="1" max="5" value="1"><b class="vd"></b></div>
-        <svg viewBox="0 0 300 190" style="width:100%;max-height:210px"><rect x="20" y="40" width="260" height="140" fill="#eaf3ff" stroke="#8aa"/>
-          <rect class="water" x="21" y="80" width="258" height="99" fill="#9cc8f2"/><rect class="brick" x="115" y="40" width="70" height="80" fill="#c9b08d" stroke="#6b5"/>
-          <line x1="20" y1="80" x2="280" y2="80" stroke="#1f5fa8" stroke-dasharray="4 3"/><text x="24" y="76" font-size="11" fill="#1f5fa8">nivelul apei</text></svg>
-      </div><div>
-        <div class="small muted">Corpul plutește vertical: forța lui Arhimede = greutatea, deci ρ = ρ<sub>apă</sub> · h / H</div>
-        <div class="result-big"><span class="rho"></span> kg/m³</div><div class="small">incertitudine estimată: ± <span class="drho"></span> kg/m³</div>
-        <div class="verdict"></div>
-        <div class="small" style="margin-top:8px">În manual: întrebarea autentică vine prima, formula vine când elevul are nevoie de ea. La clasa a VI-a – plutirea și compararea densităților (RÎ 1.4.4); la liceu – forța lui Arhimede și estimarea erorii.</div>
-      </div></div>`;
-    const H = $(".H", el), h = $(".h", el), dd = $(".d", el);
-    function upd(){
-      let Hv = Number(H.value), hv = Math.min(Number(h.value), Hv); h.value = hv; const dv = Number(dd.value);
-      const rho = 1000 * hv / Hv, drho = rho * (dv / hv + dv / Hv);
-      $(".vH", el).textContent = Hv + " mm"; $(".vh", el).textContent = hv + " mm"; $(".vd", el).textContent = dv + " mm";
-      $(".rho", el).textContent = Math.round(rho); $(".drho", el).textContent = Math.round(drho);
-      const ok = Math.abs(rho - 600) <= drho, v = $(".verdict", el);
+  /* --- Simulator: o investigație pe două niveluri (clasa a VI-a / clasa a X-a, profil real) --- */
+  $$("[data-invest]").forEach(el => {
+    const D = json(el);
+    el.classList.add("w", "invest");
+    el.innerHTML = `<div class="w-head"><div class="tabs"><button class="tab on" data-t="vi">Clasa a VI-a · cărămida ușoară</button><button class="tab" data-t="x">Clasa a X-a, profil real · jetul de apă</button></div></div>
+    <div class="pane" data-p="vi"><div class="cols" style="grid-template-columns:1.15fr 1fr;gap:18px"><div>
+      <div class="qline"><b>Întrebarea:</b> este corectă densitatea de 600 kg/m³ scrisă pe eticheta cărămizii?</div>
+      <div class="slider-row"><span>Lungimea L</span><input type="range" class="L" min="200" max="300" value="250"><b class="vL"></b></div>
+      <div class="slider-row"><span>Lățimea l</span><input type="range" class="l" min="100" max="150" value="120"><b class="vl"></b></div>
+      <div class="slider-row"><span>Înălțimea h</span><input type="range" class="hh" min="50" max="80" value="65"><b class="vh"></b></div>
+      <div class="slider-row"><span>Masa m (cântar)</span><input type="range" class="m" min="800" max="1600" step="10" value="1170"><b class="vm"></b></div>
+      <div class="small muted">Instrumente: rigla (valoarea diviziunii 1 mm) și cântarul electronic.</div>
+      <div class="brick-ill">${D.brick || ""}</div>
+    </div><div>
+      <div class="calc-steps small"></div><div class="result-big"><span class="rho"></span> kg/m³</div><div class="verdict"></div>
+      <div class="small muted" style="margin-top:6px">Clasa a VI-a: V = L·l·h, ρ = m/V, compararea cu eticheta (RÎ 1.4.1, 1.4.3, 1.4.4). Fără forța lui Arhimede și fără eroare relativă.</div>
+    </div></div></div>
+    <div class="pane" data-p="x" style="display:none"><div class="cols" style="grid-template-columns:1.15fr 1fr;gap:18px"><div>
+      <div class="qline"><b>Întrebarea:</b> cu ce viteză iese apa din orificiul vasului?</div>
+      <svg viewBox="0 0 420 170" class="jet"><rect x="8" y="14" width="44" height="140" fill="#d7e6f7" stroke="#1f5fa8" stroke-width="2"/><rect x="9" y="26" width="42" height="127" fill="#9cc8f2"/>
+        <path class="jp" fill="none" stroke="#1f5fa8" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round"/><line x1="52" y1="154" x2="415" y2="154" stroke="#16325c" stroke-width="2"/>
+        <line class="jh" stroke="#c8711d" stroke-width="2" stroke-dasharray="4 3"/><line class="jl" stroke="#c8711d" stroke-width="2"/>
+        <text class="th" font-size="13" fill="#c8711d">H</text><text class="tl" font-size="13" fill="#c8711d">L</text></svg>
+      <div class="slider-row"><span>Înălțimea orificiului H</span><input type="range" class="H" min="20" max="120" value="80"><b class="vH"></b></div>
+      <div class="slider-row"><span>Bătaia măsurată L</span><input type="range" class="Lx" min="20" max="200" value="100"><b class="vLx"></b></div>
+      <div class="slider-row"><span>Precizia măsurării Δ</span><input type="range" class="d" min="1" max="10" value="5"><b class="vd"></b></div>
+    </div><div>
+      <div class="calc-steps small xsteps"></div><div class="result-big"><span class="v0"></span> m/s</div><div class="small">eroarea relativă estimată: <b class="eps"></b> · υ₀ = <span class="v0b"></span></div>
+      <div class="small muted" style="margin-top:6px">Clasa a X-a, profil real: descompunerea mișcării (RÎ 1.3.4, 1.4.4), eroarea relativă (conținutul C5). Problemă potrivită pentru blocul „Investigații experimentale”.</div>
+    </div></div></div>`;
+    $$(".tab", el).forEach(t => t.onclick = () => { $$(".tab", el).forEach(x => x.classList.toggle("on", x === t)); $$(".pane", el).forEach(p => p.style.display = p.dataset.p === t.dataset.t ? "" : "none"); });
+    const g = 9.8, f2 = x => x.toFixed(2).replace(".", ","), f0 = x => Math.round(x).toLocaleString("ro-RO"), cm = mm => String(mm / 10).replace(".", ",");
+    function vi(){
+      const L = +$(".L", el).value, l = +$(".l", el).value, h = +$(".hh", el).value, m = +$(".m", el).value;
+      $(".vL", el).textContent = L + " mm"; $(".vl", el).textContent = l + " mm"; $(".vh", el).textContent = h + " mm"; $(".vm", el).textContent = m + " g";
+      const V = L * l * h / 1000; // cm³
+      const rho = m / V * 1000;   // kg/m³
+      $(".calc-steps", el).innerHTML = `V = L·l·h = ${cm(L)}·${cm(l)}·${cm(h)} cm³ = <b>${f0(V)} cm³</b><br>ρ = m/V = ${m} g : ${f0(V)} cm³ = <b>${(m / V).toFixed(3).replace(".", ",")} g/cm³</b>`;
+      $(".rho", el).textContent = f0(rho);
+      const d = rho - 600, v = $(".verdict", el), ok = Math.abs(d) <= 30;
       v.className = "verdict " + (ok ? "ok" : "bad");
-      v.textContent = ok ? "Valoarea declarată (600 kg/m³) se încadrează în incertitudinea măsurării." : (rho > 600 ? "Măsurarea arată o densitate mai mare decât cea declarată." : "Măsurarea arată o densitate mai mică decât cea declarată.");
-      const k = 80 / Hv * 1; // scară desen
-      const bh = Hv * 0.55, top = 80 - (Hv - hv) * 0.55;
-      const b = $(".brick", el); b.setAttribute("height", bh); b.setAttribute("y", top);
+      v.textContent = ok ? `Diferența față de etichetă este mică (${d >= 0 ? "+" : "−"}${f0(Math.abs(d))} kg/m³): rezultatul confirmă valoarea declarată.`
+                         : `Diferența este mare (${d >= 0 ? "+" : "−"}${f0(Math.abs(d))} kg/m³): verificăm măsurările sau eticheta.`;
     }
-    [H, h, dd].forEach(x => x.oninput = upd); upd();
+    function vx(){
+      const H = +$(".H", el).value, L = +$(".Lx", el).value, d = +$(".d", el).value / 10;
+      $(".vH", el).textContent = H + " cm"; $(".vLx", el).textContent = L + " cm"; $(".vd", el).textContent = "± " + d.toFixed(1).replace(".", ",") + " cm";
+      const t = Math.sqrt(2 * H / 100 / g), v0 = L / 100 / t, eps = d / L + d / (2 * H);
+      $(".xsteps", el).innerHTML = `pe verticală: H = g·t²/2 ⇒ t = √(2H/g) = <b>${f2(t)} s</b><br>pe orizontală: L = υ₀·t ⇒ υ₀ = L/t`;
+      $(".v0", el).textContent = f2(v0); $(".eps", el).textContent = (100 * eps).toFixed(1).replace(".", ",") + " %";
+      $(".v0b", el).textContent = f2(v0) + " ± " + f2(v0 * eps) + " m/s";
+      // desen: 1 cm = 1,1 px pe verticală (H max 120 → 132 px), 1 cm = 1,7 px pe orizontală
+      const y0 = 154 - H * 1.1, x0 = 52, x1 = x0 + L * 1.75;
+      let dpath = `M${x0} ${y0}`; for(let i = 1; i <= 24; i++){ const k = i / 24; dpath += ` L${x0 + (x1 - x0) * k} ${y0 + (154 - y0) * k * k}`; }
+      $(".jp", el).setAttribute("d", dpath);
+      const jh = $(".jh", el); jh.setAttribute("x1", x0 + 6); jh.setAttribute("x2", x0 + 6); jh.setAttribute("y1", y0); jh.setAttribute("y2", 154);
+      const jl = $(".jl", el); jl.setAttribute("x1", x0); jl.setAttribute("x2", x1); jl.setAttribute("y1", 164); jl.setAttribute("y2", 164);
+      $(".th", el).setAttribute("x", x0 + 10); $(".th", el).setAttribute("y", (y0 + 154) / 2);
+      $(".tl", el).setAttribute("x", (x0 + x1) / 2); $(".tl", el).setAttribute("y", 150);
+    }
+    $$(".pane[data-p=vi] input", el).forEach(i => i.oninput = vi); $$(".pane[data-p=x] input", el).forEach(i => i.oninput = vx);
+    vi(); vx();
   });
 
   /* --- Cronometru pentru lucrul în grupe --- */
