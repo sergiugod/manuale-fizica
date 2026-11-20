@@ -443,3 +443,115 @@ table.prog td:first-child{white-space:nowrap}
   .sheet .lines div{height:1.65em}
   .sheet p{margin:4px 0}
 }
+ol.plist{margin:0;padding:6px 10px 6px 34px;columns:2;column-gap:28px;font-size:19px;max-height:440px;overflow:auto}
+ol.plist li{break-inside:avoid;margin:0 0 8px;background:#fff;border-left:5px solid var(--blue);border-radius:8px;padding:5px 10px;box-shadow:var(--shadow)}
+/* Sesiunea 2: grila de evaluare, praguri, cerințe */
+table.grid-cmp{width:100%;border-collapse:collapse;font-size:19px}
+table.grid-cmp th{font-size:15px;color:#fff;background:var(--navy);padding:5px 8px;text-align:left}
+table.grid-cmp td{padding:3px 8px;border-bottom:1px solid var(--line)}
+table.grid-cmp td.n{text-align:center;white-space:nowrap}
+table.grid-cmp tr.tot td{font-weight:800;background:var(--blue-soft)}
+table.grid-cmp tr.elim td{color:var(--muted)}
+.gb{display:inline-block;height:14px;border-radius:7px;vertical-align:middle}
+.gb.old{background:#c3cad5}.gb.new{background:var(--blue)}
+b.up{color:var(--ok)}b.down{color:var(--bad)}b.eq{color:var(--muted)}
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.gauge{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;border-top:6px solid var(--bad)}
+.gauge .g-n{font-size:34px;font-weight:900;color:var(--navy);line-height:1}
+.gauge .g-t{font-size:17px;font-weight:700;color:var(--navy);min-height:44px}
+.gauge .g-bar{height:18px;border-radius:9px;background:#e7ebf1;overflow:hidden;margin:6px 0}
+.gauge .g-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--navy))}
+.gauge .g-v{font-size:18px}
+.req{display:flex;gap:16px;align-items:flex-start;background:#fff;border-left:8px solid var(--bad);border-radius:12px;box-shadow:var(--shadow);padding:14px 18px;font-size:23px;line-height:1.38}
+.req .req-n{flex:none;width:46px;height:46px;border-radius:50%;background:var(--bad);color:#fff;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center}
+.cer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cer-grid .box{padding:10px 12px}
+.cer-grid .cer{font-size:15.5px;line-height:1.3;margin:5px 0;display:flex;gap:6px}
+.cer-grid .cer b{flex:none;min-width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.cer-grid .box.man .cer b{background:var(--accent)}
+ol.steps-list{padding-left:1.2em}ol.steps-list li{margin:.35em 0}
+table.sub-new td{font-size:19px;padding:4px 8px}table.sub-new td.code{font-weight:800;color:var(--navy);white-space:nowrap}
+/* fișe: antet, profil, instrucțiuni */
+.sheet .sh-h{display:flex;align-items:center;gap:12px}
+.sheet .sh-n{flex:none;background:var(--navy);color:#fff;font-weight:800;border-radius:8px;padding:3px 10px;font-size:15px}
+.sheet .sh-h h2{margin:6px 0}
+.sheet .meta{color:var(--muted)}
+.profil{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:12.5px;border:1px dashed #9aa7b7;border-radius:8px;padding:5px 10px;margin:4px 0 6px}
+.todo{background:#eef4fb;border-left:5px solid var(--blue);border-radius:8px;padding:6px 12px;margin:4px 0 8px;font-size:13px}
+.todo ol{margin:3px 0 3px 1.2em;padding:0}.todo li{margin:1px 0}
+.todo .preda{font-weight:700;color:var(--navy)}
+table.prop{margin-top:6px}table.prop th{font-size:12.5px}
+p.crit{font-size:11.5px;color:var(--muted)}
+@media print{.profil{font-size:11px}.todo{font-size:11.5px}p.crit{font-size:10.5px}}
+@media print{.profil{font-size:12px}.todo{font-size:12.5px}}
+
+/* =====================================================================
+   Prezentările pe telefon (lățime < 820 px sau înălțime < 500 px):
+   fără scalare, un slide pe ecran, conținutul curge vertical, glisare stânga/dreapta
+   ===================================================================== */
+.vote-here{display:none}
+body.deck.mobile{overflow:hidden}
+.mobile #stage-wrap{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;bottom:44px}
+.mobile #stage{width:100%;height:auto;transform:none!important}
+.mobile .slide{position:relative;inset:auto;border-radius:0;box-shadow:none;min-height:100%;overflow:visible}
+.mobile .slide .s-head{padding:14px 14px 4px}
+.mobile .slide h2{font-size:23px}
+.mobile .slide .kicker{font-size:12px}
+.mobile .slide .s-body{padding:6px 14px 12px;font-size:16px;line-height:1.42;overflow:visible}
+.mobile .slide .s-foot{padding:4px 14px 12px;flex-direction:column;align-items:flex-start;gap:4px}
+.mobile .slide .s-foot,.mobile .slide .s-foot .src,.mobile .slide .src{font-size:12px}
+.mobile .slide .small{font-size:14.5px}
+.mobile .slide.cover{min-height:calc(100vh - 44px)}
+.mobile .slide.cover h2{font-size:30px}
+.mobile .slide.cover .s-body{font-size:17px;max-width:none}
+.mobile .slide.cover .cover-art{opacity:.45}
+.mobile .cover .meta{font-size:16px}
+.mobile .cols,.mobile .cols.c2,.mobile .cols.c3,.mobile .cols.c4{grid-template-columns:1fr!important;gap:10px}
+.mobile .gauges,.mobile .cer-grid,.mobile .qgrid{grid-template-columns:1fr!important}
+.mobile .list.grid2{grid-template-columns:1fr}
+.mobile .box{padding:10px 12px}.mobile .box h3{font-size:18px}
+.mobile .big,.mobile .big.rep{font-size:19px}.mobile .quote{font-size:18px!important}
+.mobile p.check{font-size:17px}.mobile .thanks span{font-size:24px}.mobile .thanks img{height:56px}
+.mobile .req{font-size:16px;padding:10px 12px}.mobile .req .req-n{width:34px;height:34px;font-size:18px}
+.mobile .roles .role{font-size:15px}
+.mobile .flow{flex-direction:column;gap:4px}.mobile .flow span{clip-path:none!important;border-radius:6px;font-size:14px;padding:6px 10px}
+.mobile .strip{flex-wrap:wrap}.mobile .strip img{height:40px}.mobile .strip img.arrow{height:28px}.mobile .strip .cap{font-size:13px}
+.mobile .box.nov .nov-ic{height:40px}.mobile .box.nov h3{padding-right:60px}
+.mobile .steps{flex-wrap:wrap}.mobile .agenda{font-size:16px}
+.mobile .fig img{max-height:220px}
+.mobile table{font-size:14px}
+.mobile .grid-cmp,.mobile .cls-mx,.mobile .umap,.mobile .calc table{display:block;overflow-x:auto;white-space:normal}
+.mobile table.grid-cmp{font-size:13px}.mobile .gb{display:none}
+.mobile .cls-item,.mobile .list.grid2 .cls-item{font-size:15px;flex-wrap:wrap}
+.mobile .cls-item .opts{width:100%;justify-content:flex-start;flex-wrap:wrap;padding-left:28px}
+.mobile .cls-item .opts button{font-size:13px}
+.mobile .cls-mx{font-size:14px}.mobile .cls-mx th{font-size:11px}.mobile .cls-mx td.opts{width:44px}
+.mobile .cls-mx td.opts button{width:24px;height:24px}
+.mobile .w{padding:10px}.mobile .w .w-head{flex-wrap:wrap;gap:6px}.mobile .w .w-title{font-size:16px}
+.mobile .poll{grid-template-columns:1fr!important}
+.mobile .poll .q{font-size:17px}.mobile .poll .bars .lbl{font-size:14px}.mobile .poll .bars .track{height:18px}
+.mobile .poll .qr{display:none}
+.mobile .vote-here{display:inline-block;margin-top:8px}
+.mobile .dec{grid-template-columns:1fr!important}.mobile .dec .prop{font-size:17px}.mobile .dec .ans{font-size:15px}
+.mobile .reveal-card .front{font-size:16px}.mobile .reveal-card .back{font-size:14px}
+.mobile .slider-row{grid-template-columns:1fr;font-size:15px;gap:2px}
+.mobile .result-big{font-size:26px}.mobile .verdict{font-size:15px}
+.mobile .invest .tabs{flex-wrap:wrap}.mobile .invest .tab{font-size:13px}
+.mobile .timer{font-size:44px}
+.mobile .ill-wrap .ill{max-height:80px}.mobile .brick-ill .ill{max-height:140px}
+.mobile .mock{font-size:15px}.mobile .mock-t{font-size:17px}
+.mobile .gauge .g-t{min-height:0}
+.mobile .chk{font-size:14px}.mobile .gen .out{font-size:14px}
+.mobile .umap{font-size:13px}
+.mobile ol.plist{columns:1;font-size:15px}
+.mobile #bar{height:44px;gap:8px;padding:0 8px;font-size:13px}
+.mobile #bar > span:nth-of-type(1),.mobile #bar .plan,.mobile #bar .clock,.mobile #bar .b-full{display:none}
+.mobile #bar button{padding:6px 12px;font-size:16px}
+.mobile #bar .b-lock{font-size:12px;padding:6px 8px}
+.mobile #notes{width:100%;bottom:44px;border-left:0;border-top:3px solid var(--accent);top:35%}
+#qr-zoom .qz-code svg{max-width:92vw}
+.mobile select,.mobile .c-sel,.mobile .g-sel{max-width:100%;width:100%}
+.mobile .calc .w-head > *{min-width:0;max-width:100%}
+.mobile table.sub-new{display:block;overflow-x:auto}.mobile table.sub-new td{font-size:13px}
+.mobile .calc .w-head{display:block}.mobile .calc .w-head div{max-width:100%}.mobile .calc select{max-width:100%!important;width:100%;box-sizing:border-box}
+.mobile .cols > *,.mobile .w{min-width:0;max-width:100%}

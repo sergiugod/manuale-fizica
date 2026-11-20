@@ -10,6 +10,10 @@
   const stage = $("#stage"), wrap = $("#stage-wrap");
   function fit(){
     if(!stage) return;
+    /* telefon / ecran mic: fără scalare, conținutul curge vertical */
+    const mob = window.innerWidth < 820 || window.innerHeight < 500;
+    document.body.classList.toggle("mobile", mob);
+    if(mob){ stage.style.transform = "none"; stage.style.marginRight = "0"; return; }
     const notesW = $("#notes") && $("#notes").classList.contains("show") ? 420 : 0;
     const w = wrap.clientWidth - notesW, h = wrap.clientHeight;
     const k = Math.min(w / 1280, h / 720) * 0.98;
@@ -32,6 +36,7 @@
     i = Math.max(0, Math.min(slides.length - 1, i));
     slides[cur] && slides[cur].classList.remove("active");
     cur = i; const s = slides[cur]; s.classList.add("active");
+    if(document.body.classList.contains("mobile")) wrap.scrollTop = 0;
     history.replaceState(null, "", "#" + (cur + 1));
     $("#bar .prog i").style.width = ((cur + 1) / slides.length * 100) + "%";
     $("#bar .cnt").textContent = (cur + 1) + " / " + slides.length;
@@ -57,6 +62,17 @@
     c.title = inSession ? (diff > 0 ? "Întârziere față de plan: " + diff + " min" : "În avans: " + (-diff) + " min") : "";
   }
   setInterval(tick, 20000);
+
+  /* glisare pe telefon: stânga / dreapta */
+  let tx = null, ty = null;
+  wrap.addEventListener("touchstart", e => {
+    if(e.target.closest("input, textarea, select, button, a, .cls-mx, .grid-cmp, table")) { tx = null; return; }
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, {passive: true});
+  wrap.addEventListener("touchend", e => {
+    if(tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; tx = null;
+    if(Math.abs(dx) > 70 && Math.abs(dy) < 50) show(cur + (dx < 0 ? 1 : -1));
+  }, {passive: true});
 
   document.addEventListener("keydown", e => {
     if(e.target.matches("input, textarea, select")) return;
@@ -184,14 +200,18 @@
           ${Q.type === "word" ? '<input class="w-add" placeholder="adaugă manual un cuvânt" style="font:inherit;font-size:15px;padding:3px 8px;border-radius:8px;border:1px solid #ccd">' : ""}
         </div>
         <div class="status"></div></div>
-      <div class="qr" title="Clic pentru a mări codul"><div class="code">${qrSvg(url)}</div><div>Scanați pentru vot · <b>clic = mărește</b></div><div class="qr-url">${esc(url.split("&u=")[0].replace(/^https?:\/\//,""))}</div></div>`;
+      <div class="qr" title="Clic pentru a mări codul"><div class="code">${qrSvg(url)}</div><div>Scanați pentru vot · <b>clic = mărește</b></div><div class="qr-url">${esc(url.split("&u=")[0].replace(/^https?:\/\//,""))}</div></div>
+      <a class="btn primary vote-here" href="${url}" target="_blank" rel="noopener">Votați de pe acest telefon</a>`;
     $(".qr", el).onclick = () => zoomQR(url, Q.text);
     if(hidden) el.classList.add("hidden-res");
     const res = $(".res", el), status = $(".status", el);
     function render(){
       const c = Live.enabled() ? counts : local;
       const tot = Object.values(c).reduce((a, b) => a + b, 0);
-      if(Q.type === "word"){
+      if(Q.type === "word" && Q.list){
+        const ws = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 30);
+        res.innerHTML = ws.length ? `<ol class="plist">${ws.map(([w, n]) => `<li>${esc(w)}${n > 1 ? ` <b>×${n}</b>` : ""}</li>`).join("")}</ol>` : "<div class='muted' style='font-size:16px;padding:20px'>Așteptăm propunerile…</div>";
+      } else if(Q.type === "word"){
         const ws = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 40);
         const mx = ws.length ? ws[0][1] : 1;
         res.innerHTML = `<div class="cloud">${ws.length ? ws.map(([w, n]) => `<span style="font-size:${18 + 34 * n / mx}px">${esc(w)}</span>`).join("") : "<span class='muted' style='font-size:16px'>Așteptăm răspunsurile…</span>"}</div>`;
